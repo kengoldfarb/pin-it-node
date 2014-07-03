@@ -204,7 +204,7 @@ module.exports = function PinItNode(options) {
             media = params.media;
 
             // Validate parameters
-			// TODO
+            // TODO
 
             // Do it!
             async.series([

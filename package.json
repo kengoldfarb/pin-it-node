@@ -1,16 +1,29 @@
 {
-  "name": "pin-it-node",
-  "description":"Unofficial pinterest 'pin-it' api for nodejs",
-  "version": "0.1.0",
-  "author": "Ken Goldfarb",
-  "main": "index.js",
-  "dependencies": {
-    "async": "0.9.0",
-	"request": "2.36.0"
-  },
-  "devDependencies":{
-    "grunt-cli": "0.1.9",
-    "grunt": "0.4.1",
-    "grunt-jsbeautifier": "*"
-  }
+    "name": "pin-it-node",
+    "description":"Unofficial pinterest 'pin-it' api for nodejs",
+    "version": "0.1.0",
+    "author": "Ken Goldfarb",
+    "main": "index.js",
+    "dependencies": {
+        "async": "0.9.0",
+        "request": "2.36.0"
+    },
+    "devDependencies":{
+        "grunt-cli": "0.1.9",
+        "grunt": "0.4.1",
+        "grunt-jsbeautifier": "*"
+    },
+    "repository" : {
+        "type": "git",
+        "url": "https://github.com/kengoldfarb/pin-it-node.git"
+    },
+    "bugs" : {
+        "url": "https://github.com/kengoldfarb/pin-it-node/issues"
+    },
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "https://raw.githubusercontent.com/kengoldfarb/pin-it-node/master/LICENSE"
+        }
+    ]
 }
