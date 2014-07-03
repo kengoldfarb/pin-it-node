@@ -9,6 +9,8 @@
 	"request": "2.36.0"
   },
   "devDependencies":{
+    "grunt-cli": "0.1.9",
+    "grunt": "0.4.1",
     "grunt-jsbeautifier": "*"
   }
 }
