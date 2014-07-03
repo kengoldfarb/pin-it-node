@@ -1,0 +1,112 @@
+# (Unofficial) "Pin It" Pinterest API
+
+This is an unofficial interface to Pinterest's pin-it api.  You can pin anything you want to your own boards programatically using nodejs!
+
+__Note:__ Pinterest _could_ change their api at any time causing this library to break.  You've been warned.
+
+## Installation
+
+### From the command line
+
+```npm install pin-it-node```
+
+### In package.json
+
+
+```
+{
+	dependencies: {
+		"pin-it-node": "~0.1.0"
+	}
+}
+```
+
+## Usage
+
+```
+var PinIt = require('pin-it-node');
+
+var pinIt = new PinIt({
+	username: 'MyUsername',
+	password: 'MySuperSecretPassword'
+});
+
+pinIt.pin({
+	boardId: '123', // This can be a number or the text-name.
+	// boardId: 'test-board', // http://www.pinterest.com/[username]/[boardId]/
+	url: 'http://www.kengoldfarb.com', // The click back link from pinterest
+	description: 'Wow.  Such dev.',
+	media: 'http://www.kengoldfarb.com/images/pin-it.png' // The actual image that will be pinned
+}, function(err, pinObj) {
+	if(err) {
+		// Uh-oh...handle the error
+		console.log(err);
+		return;
+	}
+
+	console.log('Success!  New pin has been added to the board.');
+	console.log(pinObj);
+})
+```
+
+## Advanced Options
+
+### 'request' module options
+
+This module makes all it's http(s) requests using [request](https://github.com/mikeal/request).  You can optionally pass in a set of options for this module when making a request.
+
+For example...
+
+```
+var PinIt = require('pin-it-node');
+
+var pinIt = new PinIt({
+	username: 'MyUsername',
+	password: 'MySuperSecretPassword',
+	requestDefaults: {
+		proxy:'http://127.0.0.1:8888',
+        strictSSL: false
+	}
+});
+
+pinIt.pin({
+	...
+});
+```
+
+Consult the [request](https://github.com/mikeal/request) module documentation for a full list of options.
+
+### debug mode
+
+When instantiating set ```options.debug = true``` for more verbose log output.
+
+```
+var PinIt = require('pin-it-node');
+
+var pinIt = new PinIt({
+	username: 'MyUsername',
+	password: 'MySuperSecretPassword',
+	debug: true
+});
+
+...
+
+```
+
+## Versioning
+
+This project will follow the [Semantic Versioning 2.0.0](http://semver.org/) guidelines once version 1.0.0 is released.  Until that time, any updates might be backwards-incompatible changes.
+
+Since this is an unofficial api, a "stable" version 1.0.0 will be released once this has been tested in the wild and includes reasonable unit testing.
+
+## Unit tests
+
+None yet.  That's why it's not version 1.0 yet. =)
+
+## Author
+
+__Ken Goldfarb__ http://www.kengoldfarb.com
+
+## License
+
+MIT.  Do whatever you want with it.
