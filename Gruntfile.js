@@ -3,14 +3,7 @@ module.exports = function(grunt) {
     grunt.initConfig({
         jsbeautifier: {
             files: [
-                // 'static/js/**/*',
-                'server.js',
-                'routes/**/*',
-                'lib/*',
-                'routes.json',
-                'controllers/**/*',
-                'models/**/*',
-                'config/**/*',
+                'index.js',
                 'Gruntfile.js'
             ],
             options: {}
