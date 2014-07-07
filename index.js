@@ -95,6 +95,8 @@ module.exports = function PinItNode(options) {
             } else {
                 _log('! ERROR: _doLogin');
                 _log(error2);
+                _log('Status code: ' + response2.statusCode);
+                _log(body2);
                 cb(error2);
                 return;
             }
@@ -176,7 +178,7 @@ module.exports = function PinItNode(options) {
                 _log('! ERROR: _pinIt');
                 _log(error3);
                 _log(response3.statusCode);
-                _log(body3);
+                // _log(body3);
                 cb(new Error('Unknown error occurred while pinning'));
                 return;
             }
