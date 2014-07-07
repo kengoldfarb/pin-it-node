@@ -48,6 +48,8 @@ pinIt.pin({
 })
 ```
 
+__Currently only pinning of images is supported__
+
 ### Getting the boardId
 
 You can get the boardId by going to pinterest and inspecting the GET request to http://www.pinterest.com/resource/BoardResource/get/.  You should see it listed in the "module_path" parameter of the request in the format: ```resource=BoardResource(board_id=1234567)```
