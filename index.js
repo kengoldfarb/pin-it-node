@@ -165,7 +165,7 @@ module.exports = function PinItNode(options) {
             },
             form: {
                 source_url: '/pin/create/button/?url=' + url + '&description=' + description + '&media=' + media,
-                data: '{"options":{"board_id":"294704438055170924","description":"' + description + '","link":"' + url + '","image_url":"' + media + '","method":"button","is_video":null},"context":{}}',
+                data: '{"options":{"board_id":"' + boardId + '","description":"' + description + '","link":"' + url + '","image_url":"' + media + '","method":"button","is_video":null},"context":{}}',
                 module_path: 'App()>PinBookmarklet()>PinCreate()>PinForm(description=' + description + ', default_board_id="", show_cancel_button=true, cancel_text=Close, link=' + url + ', show_uploader=false, image_url=' + media + ', is_video=null, heading=Pick a board, pin_it_script_button=true)'
             },
             jar: cookieJar
