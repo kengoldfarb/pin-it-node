@@ -32,8 +32,7 @@ var pinIt = new PinIt({
 });
 
 pinIt.pin({
-	boardId: '123', // This can be a number or the text-name.
-	// boardId: 'test-board', // http://www.pinterest.com/[username]/[boardId]/
+	boardId: '123',
 	url: 'http://www.kengoldfarb.com', // The click back link from pinterest
 	description: 'Wow.  Such dev.',
 	media: 'http://www.kengoldfarb.com/images/pin-it.png' // The actual image that will be pinned
@@ -48,6 +47,10 @@ pinIt.pin({
 	console.log(pinObj);
 })
 ```
+
+### Getting the boardId
+
+You can get the boardId by going to pinterest and inspecting the GET request to http://www.pinterest.com/resource/BoardResource/get/.  You should see it listed in the "module_path" parameter of the request in the format: ```resource=BoardResource(board_id=1234567)```
 
 ## Advanced Options
 
