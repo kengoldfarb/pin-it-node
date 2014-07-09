@@ -160,9 +160,9 @@ module.exports = function PinItNode(options) {
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
                 'Accept': 'application/json, text/javascript, */*; q=0.01',
                 'Referer': 'https://www.pinterest.com/login/',
-                'Accept-Encoding': 'gzip,deflate,sdch',
                 'Accept-Language': 'en-US,en;q=0.8'
             },
+            gzip: true,
             form: {
                 source_url: '/pin/create/button/?url=' + url + '&description=' + description + '&media=' + media,
                 data: '{"options":{"board_id":"' + boardId + '","description":"' + description + '","link":"' + url + '","image_url":"' + media + '","method":"button","is_video":null},"context":{}}',
@@ -172,7 +172,7 @@ module.exports = function PinItNode(options) {
         }, function(error3, response3, body3) {
             if (!error3 && response3.statusCode == 200) {
                 _log('SUCCESS: _pinIt');
-                cb(null);
+                cb(null, body3);
                 return;
             } else {
                 _log('! ERROR: _pinIt');
@@ -223,7 +223,13 @@ module.exports = function PinItNode(options) {
                 }
 
                 if (typeof cb === 'function') {
-                    cb(null);
+                    // See if we have an object response
+                    if(results && results[3]) {
+                        cb(null, results[3]);
+                    }else{
+                        _log('Warning: No object result.  Something might have gone wrong');
+                        cb(null);
+                    }
                 }
             });
         }
