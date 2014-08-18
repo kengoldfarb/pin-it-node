@@ -106,7 +106,15 @@ Since this is an unofficial api, a "stable" version 1.0.0 will be released once 
 
 ## Unit tests
 
-None yet.  That's why it's not version 1.0 yet. =)
+__Not yet complete.__
+
+To run the tests...
+
+```
+$ cd tests/
+$ npm install
+$ node_modules/.bin/mocha pinItTests.js
+```
 
 ## Author
 

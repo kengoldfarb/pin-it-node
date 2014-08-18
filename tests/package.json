@@ -1,0 +1,15 @@
+{
+  "name": "pin-it-node-tests",
+  "description":"",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "async": "*",
+    "mocha": "*",
+    "chai": "*",
+    "request": "*"
+  },
+  "devDependencies":{
+
+  }
+}
