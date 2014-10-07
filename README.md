@@ -23,6 +23,8 @@ __Note:__ Pinterest _could_ change their api at any time causing this library to
 
 ## Usage
 
+<em>To Pin:</em>
+
 ```
 var PinIt = require('pin-it-node');
 
@@ -48,11 +50,40 @@ pinIt.pin({
 })
 ```
 
+<em>To Remove Pin:</em>
+
+```
+var PinIt = require('pin-it-node');
+
+var pinIt = new PinIt({
+	username: 'MyUsername',
+	password: 'MySuperSecretPassword'
+});
+
+pinIt.unpin({
+	pinId: '123'
+}, function(err, pinObj) {
+	if(err) {
+		// Uh-oh...handle the error
+		console.log(err);
+		return;
+	}
+
+	console.log('Success!  Pin has been removed from the board.');
+	console.log(pinObj);
+})
+```
+
+
 __Currently only pinning of images is supported__
 
 ### Getting the boardId
 
 You can get the boardId by going to pinterest and inspecting the GET request to http://www.pinterest.com/resource/BoardResource/get/.  You should see it listed in the "module_path" parameter of the request in the format: ```resource=BoardResource(board_id=1234567)```
+
+### Getting the pinId
+(for pin removal)
+It's easy to grab from the html of the board.  
 
 ## Advanced Options
 
@@ -119,6 +150,9 @@ $ node_modules/.bin/mocha pinItTests.js
 ## Author
 
 __Ken Goldfarb__ http://www.kengoldfarb.com
+
+Also contributing:  
+__Ben Pevsner__ http://www.benpevsner.com
 
 ## License
 

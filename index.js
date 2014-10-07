@@ -16,6 +16,7 @@ module.exports = function PinItNode(options) {
     var password = options.password;
 
     var boardId;
+    var pinId;
     var url;
     var description;
     var media;
@@ -185,6 +186,49 @@ module.exports = function PinItNode(options) {
         });
     }
 
+
+    function _unpinIt(cb) {
+        _log('_unpinIt');
+        request({
+            method: 'POST',
+            url: 'http://www.pinterest.com/resource/PinResource/delete/',
+            headers: {
+                'Host': "www.pinterest.com",
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': csrfToken,
+                'X-NEW-APP': '1',
+                'X-APP-VERSION': '6757f6e',
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                'Accept': 'application/json, text/javascript, */*; q=0.01',
+                'Content-length': '220',
+                'Referer': 'http://www.pinterest.com/notjohnw/hey-coupons/',
+                'Connection': 'keep-alive',
+                'Accept-Encoding': 'gzip, deflate',
+                'Accept-Language': 'en-US,en;q=0.5'
+            },
+            gzip: true,
+            form: {
+                source_url: '/notjohnw/hey-coupons/',
+                data: '{"options":{"id":"' + pinId +'"},"context":{}}',
+                module_path: 'Modal()>ConfirmDialog(ga_category=pin_delete,+template=delete_pin)' 
+            },
+            jar: cookieJar
+        }, function(error3, response3, body3) {
+            if (!error3 && response3.statusCode == 200) {
+                _log('SUCCESS: _unpinIt');
+                cb(null, body3);
+                return;
+            } else {
+                _log('! ERROR: _unpinIt');
+                _log(error3);
+                _log(response3.statusCode);
+                // _log(body3);
+                cb(new Error('Unknown error occurred while unpinning'));
+                return;
+            }
+        });
+    }
+
     return {
         /**
          * Pins an item to a board
@@ -232,6 +276,44 @@ module.exports = function PinItNode(options) {
                     }
                 }
             });
+        },
+
+        unpin: function unpin(params, cb) {
+            pinId = params.pinId;
+            url = params.url;
+            description = params.description;
+            media = params.media;
+
+            // Validate parameters
+            // TODO
+
+            // Do it!
+            async.series([
+                _getLoginPageCSRF,
+                _doLogin,
+                _getNewCSRFForPinning,
+                _unpinIt
+            ], function(err, results) {
+                if (err) {
+                    if (typeof cb === 'function') {
+                        cb(err);
+                    }
+                    return;
+                }
+
+                if (typeof cb === 'function') {
+                    // See if we have an object response
+                    if(results && results[3]) {
+                        cb(null, results[3]);
+                    }else{
+                        _log('Warning: No object result.  Something might have gone wrong');
+                        cb(null);
+                    }
+                }
+            });
         }
     };
 };
+
+
+
