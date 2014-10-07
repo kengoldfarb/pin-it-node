@@ -151,7 +151,7 @@ $ node_modules/.bin/mocha pinItTests.js
 
 __Ken Goldfarb__ http://www.kengoldfarb.com
 
-Also contributing:  
+Contributed unpin function:  
 __Ben Pevsner__ http://www.benpevsner.com
 
 ## License
