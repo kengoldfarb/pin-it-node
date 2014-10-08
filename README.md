@@ -83,7 +83,7 @@ You can get the boardId by going to pinterest and inspecting the GET request to 
 
 ### Getting the pinId
 (for pin removal)
-It's easy to grab from the html of the board.  
+It's easy to grab from the html of the board.  Look for the href in the '.pinImageWrapper' class.
 
 ## Advanced Options
 
