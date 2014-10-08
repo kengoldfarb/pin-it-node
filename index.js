@@ -17,6 +17,8 @@ module.exports = function PinItNode(options) {
 
     var boardId;
     var pinId;
+    var userurl;
+    var boardname
     var url;
     var description;
     var media;
@@ -201,7 +203,7 @@ module.exports = function PinItNode(options) {
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
                 'Accept': 'application/json, text/javascript, */*; q=0.01',
                 'Content-length': '220',
-                'Referer': 'http://www.pinterest.com/notjohnw/hey-coupons/',
+                'Referer': 'http://www.pinterest.com/' + userurl + '/' + boardname + '/',
                 'Connection': 'keep-alive',
                 'Accept-Encoding': 'gzip, deflate',
                 'Accept-Language': 'en-US,en;q=0.5'
@@ -278,11 +280,25 @@ module.exports = function PinItNode(options) {
             });
         },
 
+
+        /**
+         * unpins an item from a board
+         * example board url: "http://www.pinterest.com/kentester24/test-board/
+         *
+         * Request parameters:
+         * 'params' - an object containing the parameters for pinning:
+         * {
+         *	pinId: '12345',
+         *	userurl: 'kentester24',  
+         *	boardName: test-board
+         * }
+         *
+         */
+
         unpin: function unpin(params, cb) {
             pinId = params.pinId;
-            url = params.url;
-            description = params.description;
-            media = params.media;
+            userurl = params.userurl;
+            boardname = params.boardname;
 
             // Validate parameters
             // TODO
