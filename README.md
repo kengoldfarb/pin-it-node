@@ -74,6 +74,35 @@ pinIt.unpin({
 })
 ```
 
+<em>To Edit Pin:</em>
+
+```
+var PinIt = require('pin-it-node');
+
+var pinIt = new PinIt({
+	username: 'MyUsername',
+	password: 'MySuperSecretPassword'
+});
+
+pinIt.repin({
+	boardId: '123',
+	pinId: '12345', 
+	userurl: 'kentester24', //the location of the user on Pinterest
+	boardname: 'test-board', //the location of the board on Pinterest
+	url: 'http://www.kengoldfarb.com', // The click back link from pinterest
+	description: 'Wow.  Such dev.',
+	
+}, function(err, pinObj) {
+	if(err) {
+		// Uh-oh...handle the error
+		console.log(err);
+		return;
+	}
+
+	console.log('Success!  The pin has been edited.');
+	console.log(pinObj);
+})
+```
 
 __Currently only pinning of images is supported__
 
@@ -83,7 +112,7 @@ You can get the boardId by going to pinterest and inspecting the GET request to 
 
 ### Getting the pinId
 (for pin removal)
-It's easy to grab from the html of the board.  Look for the href in the '.pinImageWrapper' class.
+It's easy to grab from the html of the board.  Look for the href in the '.pinImageWrapper' class.  If you are viewing a pin, the pinId is the number in the url.
 
 ## Advanced Options
 
@@ -151,7 +180,7 @@ $ node_modules/.bin/mocha pinItTests.js
 
 __Ken Goldfarb__ http://www.kengoldfarb.com
 
-Contributed unpin function:  
+Contributed unpin and repin functions:  
 __Ben Pevsner__ http://www.benpevsner.com
 
 ## License
