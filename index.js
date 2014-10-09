@@ -213,7 +213,7 @@ module.exports = function PinItNode(options) {
             },
             gzip: true,
             form: {
-                source_url: '/notjohnw/hey-coupons/',
+                source_url: '/' + userurl + '/' + boardname + '/',
                 data: '{"options":{"id":"' + pinId +'"},"context":{}}',
                 module_path: 'Modal()>ConfirmDialog(ga_category=pin_delete,+template=delete_pin)' 
             },
