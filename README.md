@@ -104,6 +104,93 @@ pinIt.repin({
 })
 ```
 
+
+<em>To Create Board:</em>
+
+```
+var PinIt = require('pin-it-node');
+
+var pinIt = new PinIt({
+	username: 'MyUsername',
+	password: 'MySuperSecretPassword'
+});
+
+pinIt.repin({
+	boardname: 'TestBoard',
+        description: 'an #awesome board of epic proportions',
+	userurl: 'kentester24',     //the location of your account on pinterest
+        boardCategory:  'Animals',  //Limited options, check README for list
+        boardPrivacy:  'Public'     //or 'Private'
+	
+}, function(err, pinObj) {
+	if(err) {
+		// Uh-oh...handle the error
+		console.log(err);
+		return;
+	}
+
+	console.log('Success!  The board has been created.');
+	console.log(pinObj);
+})
+```
+
+<em>To Delete Board:</em>
+
+```
+var PinIt = require('pin-it-node');
+
+var pinIt = new PinIt({
+	username: 'MyUsername',
+	password: 'MySuperSecretPassword'
+});
+
+pinIt.repin({
+	boardname: 'TestBoard',
+        boardId: '12345',
+        userurl: 'kentester24',  //the location of your account on pinterest
+	
+}, function(err, pinObj) {
+	if(err) {
+		// Uh-oh...handle the error
+		console.log(err);
+		return;
+	}
+
+	console.log('Success!  The board has been deleted.');
+	console.log(pinObj);
+})
+```
+
+<em>To Update Board:</em>
+
+```
+var PinIt = require('pin-it-node');
+
+var pinIt = new PinIt({
+	username: 'MyUsername',
+	password: 'MySuperSecretPassword'
+});
+
+pinIt.repin({
+	boardname: 'TestBoard',
+        boardId: '12345',
+        description: 'an #awesome board of epic proportions',
+	userurl: 'kentester24',  //the location of your account on pinterest
+        boardCategory:  'Animals',  //Limited options, 
+        boardPrivacy:  'Public' //or 'Private'
+	
+}, function(err, pinObj) {
+	if(err) {
+		// Uh-oh...handle the error
+		console.log(err);
+		return;
+	}
+
+	console.log('Success!  The board has been created.');
+	console.log(pinObj);
+})
+```
+
 __Currently only pinning of images is supported__
 
 ### Getting the boardId
@@ -113,6 +200,15 @@ You can get the boardId by going to pinterest and inspecting the GET request to 
 ### Getting the pinId
 (for pin removal)
 It's easy to grab from the html of the board.  Look for the href in the ```.pinImageWrapper``` class.  If you are viewing a pin, the pinId is the number in the url.
+
+### Board Category
+There is a limted number of categories that Pinterest lets you choose from:
+"Animals", "Architecture", "Art", "Cars & Motorcycles", "Celebrities", "Design", "DIY & Crafts", "Education", "Film", "Music & Books", "Food & Drink", "Gardening", "Geek", "Hair & Beauty", "Health & Fitness", "History", "Holidays & Events", "Home Decor", "Humor", "Illustrations & Posters", "Kids", "Men's Fashion", "Outdoors", "Photography", "Products", "Quotes", "Science & Nature", "Sports", "Tattoos", "Technology", "Travel", "Weddings", "Women's Fashion", and "Other"
+
+
+### Board Privacy
+Boards can be 'Public' or 'Private'.  Insert one of those two as strings when creating or updating a board.
+
 
 ## Advanced Options
 
