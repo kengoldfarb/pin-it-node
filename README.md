@@ -23,7 +23,7 @@ __Note:__ Pinterest _could_ change their api at any time causing this library to
 
 ## Usage
 
-<em>To Pin:</em>
+####<em>To Pin:</em>
 
 ```
 var PinIt = require('pin-it-node');
@@ -50,7 +50,7 @@ pinIt.pin({
 })
 ```
 
-<em>To Remove Pin:</em>
+####<em>To Remove Pin:</em>
 
 ```
 var PinIt = require('pin-it-node');
@@ -74,7 +74,7 @@ pinIt.unpin({
 })
 ```
 
-<em>To Edit Pin:</em>
+####<em>To Edit Pin:</em>
 
 ```
 var PinIt = require('pin-it-node');
@@ -105,7 +105,7 @@ pinIt.repin({
 ```
 
 
-<em>To Create Board:</em>
+####<em>To Create Board:</em>
 
 ```
 var PinIt = require('pin-it-node');
@@ -117,10 +117,10 @@ var pinIt = new PinIt({
 
 pinIt.repin({
 	boardname: 'TestBoard',
-        description: 'an #awesome board of epic proportions',
+	description: 'an #awesome board of epic proportions',
 	userurl: 'kentester24',     //the location of your account on pinterest
-        boardCategory:  'Animals',  //Limited options, check README for list
-        boardPrivacy:  'Public'     //or 'Private'
+	boardCategory:  'Animals',  //Limited options, check README for list
+	boardPrivacy:  'Public'     //or 'Private'
 	
 }, function(err, pinObj) {
 	if(err) {
@@ -134,7 +134,7 @@ pinIt.repin({
 })
 ```
 
-<em>To Delete Board:</em>
+####<em>To Delete Board:</em>
 
 ```
 var PinIt = require('pin-it-node');
@@ -146,8 +146,8 @@ var pinIt = new PinIt({
 
 pinIt.repin({
 	boardname: 'TestBoard',
-        boardId: '12345',
-        userurl: 'kentester24',  //the location of your account on pinterest
+	boardId: '12345',
+	userurl: 'kentester24',  //the location of your account on pinterest
 	
 }, function(err, pinObj) {
 	if(err) {
@@ -161,7 +161,7 @@ pinIt.repin({
 })
 ```
 
-<em>To Update Board:</em>
+####<em>To Update Board:</em>
 
 ```
 var PinIt = require('pin-it-node');
@@ -173,11 +173,11 @@ var pinIt = new PinIt({
 
 pinIt.repin({
 	boardname: 'TestBoard',
-        boardId: '12345',
-        description: 'an #awesome board of epic proportions',
+	boardId: '12345',
+	description: 'an #awesome board of epic proportions',
 	userurl: 'kentester24',  //the location of your account on pinterest
-        boardCategory:  'Animals',  //Limited options, 
-        boardPrivacy:  'Public' //or 'Private'
+	boardCategory:  'Animals',  //Limited options, 
+	boardPrivacy:  'Public' //or 'Private'
 	
 }, function(err, pinObj) {
 	if(err) {
