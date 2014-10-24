@@ -63,6 +63,7 @@ var pinIt = new PinIt({
 });
 
 pinIt.deletePin({
+	boardurl: 'kens-board',
 	pinId: '123' 
 	
 }, function(err, pinObj) {
@@ -174,8 +175,9 @@ var pinIt = new PinIt({
 });
 
 pinIt.updateBoard({
-	boardName: 'THIS IS A MORE AWESOME NAME',
 	boardurl: 'kens-awesome-board',
+	
+	boardName: 'THIS IS A MORE AWESOME NAME',
 	description: 'an #awesome board of epic proportions',
 	boardCategory:  'Animals',  //Limited options, 
 	boardPrivacy:  'Public' //or 'Private'
@@ -195,7 +197,8 @@ pinIt.updateBoard({
 __Currently only pinning of images is supported__
 
 ###Getting the boardurl and userurl
-If you look at any the url of any board, you will be looking at: ```http://www.pinterest.com/userurl/boardurl/```
+If you look at any the url of any board, you will be looking at: ```http://www.pinterest.com/userurl/boardurl/```.
+The formatting of a boardurl is generally in lowercase with removed puncuation and "-" substituted for whitespace.
 
 
 ### Getting the pinId
@@ -210,7 +213,7 @@ There is a limted number of categories that Pinterest lets you choose from:
 
 ### Board Privacy
 Boards can be 'public' or 'secret'.  Insert one of those two as a string when creating or updating a board.
-Secret boards CANNOT BE UPDATED OR DELETED via pin-it-node.  This functionality is in the works, but it is not implemented yet.
+__SECRET BOARDS CANNOT BE UPDATED OR DELETED__ via pin-it-node.  This functionality is in the works, but it is not implemented yet.
 
 ### Board ID's
 The boardId is NOT NECESSARY to pin.  However, if it's an option you prefer, pin-it-node accepts this instead of a boardurl.
@@ -286,7 +289,7 @@ $ node_modules/.bin/mocha pinItTests.js
 
 __Ken Goldfarb__ http://www.kengoldfarb.com
 
-Contributed unpin and repin functions and board functions:  
+Contributed unpin and repin functions, board functions, and boardId-less functionality:  
 __Ben Pevsner__ http://www.benpevsner.com
 
 ## License
