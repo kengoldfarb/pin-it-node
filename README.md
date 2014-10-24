@@ -30,11 +30,13 @@ var PinIt = require('pin-it-node');
 
 var pinIt = new PinIt({
 	username: 'MyUsername',
+	userurl: 'kengoldfarb',
 	password: 'MySuperSecretPassword'
 });
 
 pinIt.pin({
-	boardId: '123',
+	boardurl: 'kens-awesome-board',
+	userurl: 'kengoldfarb',
 	url: 'http://www.kengoldfarb.com', // The click back link from pinterest
 	description: 'Wow.  Such dev.',
 	media: 'http://www.kengoldfarb.com/images/pin-it.png' // The actual image that will be pinned
@@ -57,6 +59,7 @@ var PinIt = require('pin-it-node');
 
 var pinIt = new PinIt({
 	username: 'MyUsername',
+	userurl: 'kengoldfarb',
 	password: 'MySuperSecretPassword'
 });
 
@@ -81,11 +84,12 @@ var PinIt = require('pin-it-node');
 
 var pinIt = new PinIt({
 	username: 'MyUsername',
+	userurl: 'kengoldfarb',
 	password: 'MySuperSecretPassword'
 });
 
 pinIt.repin({
-	boardId: '123',
+	boardurl: 'kens-awesome-board',
 	pinId: '12345', 
 	userurl: 'kentester24', //the location of the user on Pinterest
 	boardname: 'test-board', //the location of the board on Pinterest
@@ -112,6 +116,7 @@ var PinIt = require('pin-it-node');
 
 var pinIt = new PinIt({
 	username: 'MyUsername',
+	userurl: 'kengoldfarb',
 	password: 'MySuperSecretPassword'
 });
 
@@ -141,12 +146,13 @@ var PinIt = require('pin-it-node');
 
 var pinIt = new PinIt({
 	username: 'MyUsername',
+	userurl: 'kengoldfarb',
 	password: 'MySuperSecretPassword'
 });
 
 pinIt.repin({
 	boardname: 'TestBoard',
-	boardId: '12345',
+	boardurl: 'kens-awesome-board',
 	userurl: 'kentester24',  //the location of your account on pinterest
 	
 }, function(err, pinObj) {
@@ -168,12 +174,13 @@ var PinIt = require('pin-it-node');
 
 var pinIt = new PinIt({
 	username: 'MyUsername',
+	userurl: 'kengoldfarb',
 	password: 'MySuperSecretPassword'
 });
 
 pinIt.repin({
 	boardname: 'TestBoard',
-	boardId: '12345',
+	boardurl: 'kens-awesome-board',
 	description: 'an #awesome board of epic proportions',
 	userurl: 'kentester24',  //the location of your account on pinterest
 	boardCategory:  'Animals',  //Limited options, 
@@ -223,6 +230,7 @@ var PinIt = require('pin-it-node');
 
 var pinIt = new PinIt({
 	username: 'MyUsername',
+	userurl: 'kengoldfarb',
 	password: 'MySuperSecretPassword',
 	requestDefaults: {
 		proxy:'http://127.0.0.1:8888',
@@ -246,6 +254,7 @@ var PinIt = require('pin-it-node');
 
 var pinIt = new PinIt({
 	username: 'MyUsername',
+	userurl: 'kengoldfarb',
 	password: 'MySuperSecretPassword',
 	debug: true
 });
