@@ -498,48 +498,6 @@ module.exports = function PinItNode(options) {
         });
     }//_updateBoard
 
-
-    function _getPins(cb) {
-        _log('_getPins');
-        request({
-            method: 'POST',
-            url: 'http://www.pinterest.com/resource/BoardResource/update/',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRFToken': csrfToken,
-                'X-NEW-APP': '1',
-                'X-APP-VERSION': '6757f6e',
-                'Origin': 'https://www.pinterest.com',
-                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-                'Accept': 'application/json, text/javascript, */*; q=0.01',
-                'Referer': 'https://www.pinterest.com/userurl/',
-                'Accept-Language': 'en-US,en;q=0.5'
-            },
-            gzip: true,
-            form: {
-                source_url: '/' + userurl +'/' + boardurl + '/',
-                data: '{"options":{"name":"'+ boardurl +'","category":"'+ boardCategory + '","description":"'+ description +'","layout":"default","board_id":"' + boardId + '"},"context":{}}',
-                module_path: 'App()>BoardPage(resource=BoardResource(username='+ userurl + ',+slug=' + boardurl + '))>BoardHeader(resource=BoardResource(board_id=' + boardId + '))>BoardInfoBar(resource=BoardResource(board_id=' + boardId + '))>ShowModalButton(module=BoardEdit)#Modal(module=BoardEdit(resource=BoardResource(board_id=' + boardId + ')))'
-            },
-            jar: cookieJar
-        }, function(error3, response3, body3) {
-            if (!error3 && response3.statusCode == 200) {
-                _log('SUCCESS: _updateBoard');
-                cb(null, body3);
-                return;
-            } else {
-                _log('! ERROR: _updateBoard');
-                _log(error3);
-                _log(response3.statusCode);
-                // _log(body3);
-                cb(new Error('Unknown error occurred while obtaining pins'));
-                return;
-            }
-        });
-    }//_updateBoard
-
-
-
     return {
         /**
          * Pins an item to a board
