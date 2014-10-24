@@ -207,7 +207,7 @@ There is a limted number of categories that Pinterest lets you choose from:
 
 
 ### Board Privacy
-Boards can be 'Public' or 'Private'.  Insert one of those two as strings when creating or updating a board.
+Boards can be 'public' or 'secret'.  Insert one of those two as a string when creating or updating a board.
 
 
 ## Advanced Options
@@ -276,7 +276,7 @@ $ node_modules/.bin/mocha pinItTests.js
 
 __Ken Goldfarb__ http://www.kengoldfarb.com
 
-Contributed unpin and repin functions:  
+Contributed unpin and repin functions and board functions:  
 __Ben Pevsner__ http://www.benpevsner.com
 
 ## License
