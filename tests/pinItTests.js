@@ -7,9 +7,10 @@ var PinIt = require('pin-it-node');
 var pinIt = new PinIt({
     username: 'myUser@name.com',
     password: 'mySuperSecretPassword', // Replace username, password, and boardId below with your actual credentials
-    userurl: 'kengoldfarb',
-    debug: true
+    userurl: 'kentester24'
 });
+
+var testData = {};
 
 describe('pin it', function () {
 	this.timeout(15000);
@@ -30,6 +31,29 @@ describe('pin it', function () {
 				done();
 		    }else{
 				console.log('Success!  New pin has been added to the board.');
+				console.log(pinObj);
+				testData.pinId = pinObj.resource_response.data.id;
+				done();
+			}
+		})
+	});
+
+	it('should be able to delete a pin', function(done) {
+		pinIt.deletePin({
+		    boardurl: 'test-board',
+		    pinId: testData.pinId 
+
+		}, function(err, pinObj) {
+		    assert.isNull(err);
+			assert.isObject(pinObj);
+
+		    if(err) {
+		        // Uh-oh...handle the error
+				console.log('Error occurred while deleting a pin');
+		        console.log(err);
+				done();
+		    }else{
+				console.log('Success!  Pin deleted');
 				console.log(pinObj);
 				done();
 			}
