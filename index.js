@@ -4,8 +4,11 @@ module.exports = function PinItNode(options) {
         r = require('request'),
         request;
 
-    if (typeof options.requestDefaults === 'object') {request = r.defaults(options.requestDefaults);} 
-    else {request = r.defaults({});}
+    if (typeof options.requestDefaults === 'object') {
+        request = r.defaults(options.requestDefaults);
+    } else {
+        request = r.defaults({});
+    }
 
     var debug = options.debug || false,
         username = options.username,
@@ -31,7 +34,7 @@ module.exports = function PinItNode(options) {
         if (debug) {
             console.log(obj);
         }
-    }//_log
+    } //_log
 
     function _getLoginPageCSRF(cb) {
         _log('_getLoginPageCSRF');
@@ -66,7 +69,7 @@ module.exports = function PinItNode(options) {
                 return;
             }
         });
-    }//_getLoginPageCSRF
+    } //_getLoginPageCSRF
 
     function _doLogin(cb) {
         _log('_doLogin');
@@ -105,7 +108,7 @@ module.exports = function PinItNode(options) {
                 return;
             }
         });
-    }//_doLogin
+    } //_doLogin
 
     function _getNewCSRFForPinning(cb) {
         _log('_getNewCSRFForPinning');
@@ -148,11 +151,11 @@ module.exports = function PinItNode(options) {
             cb(null);
             return;
         });
-    }//_getNewCSRFForPinning
+    } //_getNewCSRFForPinning
 
     function _getBoardId(cb) {
 
-        if(boardId){
+        if (boardId) {
             cb(null);
             return
         };
@@ -173,7 +176,7 @@ module.exports = function PinItNode(options) {
         }, function(error3, response3, body3) {
 
             if (!error3 && response3.statusCode == 200) {
-                    _log('SUCCESS: _getBoardId');
+                _log('SUCCESS: _getBoardId');
             } else {
                 _log('! ERROR: _getBoardId');
                 _log(error3);
@@ -186,19 +189,21 @@ module.exports = function PinItNode(options) {
             var idLocation = _getIndicesOf("board_id", body3.toString(), false);
             var nameLocation = _getIndicesOf('<a href="', body3.toString(), false);
 
-            for(var i=1; i<(idLocation.length/3); i++){
-                boardIdList[i-1] = body3.toString().substring(idLocation[i*3]+12, idLocation[i*3]+30);
-                if(boardIdList[i-1] === boardIdList[i-2]){
-                    boardIdList.splice(i-1, 1);
+            for (var i = 1; i < (idLocation.length / 3); i++) {
+                boardIdList[i - 1] = body3.toString().substring(idLocation[i * 3] + 12, idLocation[i * 3] + 30);
+                if (boardIdList[i - 1] === boardIdList[i - 2]) {
+                    boardIdList.splice(i - 1, 1);
                 }
             }
 
-            boardIdList = boardIdList.filter(function(n){ return n != undefined });
+            boardIdList = boardIdList.filter(function(n) {
+                return n != undefined
+            });
 
-            for(var j=7; j<(nameLocation.length-3); j++){
-                boardNameList[j-7] = body3.toString().substring((nameLocation[j]+11+userurl.length), (nameLocation[j]+50)).split('/')[0];
-                if(boardNameList[j-7] == boardurl){
-                    boardId = boardIdList[j-7];
+            for (var j = 7; j < (nameLocation.length - 3); j++) {
+                boardNameList[j - 7] = body3.toString().substring((nameLocation[j] + 11 + userurl.length), (nameLocation[j] + 50)).split('/')[0];
+                if (boardNameList[j - 7] == boardurl) {
+                    boardId = boardIdList[j - 7];
                 }
             }
 
@@ -207,7 +212,8 @@ module.exports = function PinItNode(options) {
 
 
             function _getIndicesOf(searchStr, str, caseSensitive) {
-                var startIndex = 0, searchStrLen = searchStr.length;
+                var startIndex = 0,
+                    searchStrLen = searchStr.length;
                 var index, indices = [];
                 if (!caseSensitive) {
                     str = str.toLowerCase();
@@ -218,9 +224,9 @@ module.exports = function PinItNode(options) {
                     startIndex = index + searchStrLen;
                 }
                 return indices;
-            }//_getIndicesOf
-        });//function
-    }//_getBoardId
+            } //_getIndicesOf
+        }); //function
+    } //_getBoardId
 
     function _createPin(cb) {
         _log('_createPin');
@@ -250,7 +256,7 @@ module.exports = function PinItNode(options) {
                 _log('SUCCESS: _createPin');
                 cb(null, body3);
                 return;
-            } else if(!boardId){
+            } else if (!boardId) {
                 _log('! ERROR: _createPin');
                 _log(error3);
                 _log(response3.statusCode);
@@ -291,8 +297,8 @@ module.exports = function PinItNode(options) {
             gzip: true,
             form: {
                 source_url: '/' + userurl + '/' + boardurl + '/',
-                data: '{"options":{"id":"' + pinId +'"},"context":{}}',
-                module_path: 'Modal()>ConfirmDialog(ga_category=pin_delete,+template=delete_pin)' 
+                data: '{"options":{"id":"' + pinId + '"},"context":{}}',
+                module_path: 'Modal()>ConfirmDialog(ga_category=pin_delete,+template=delete_pin)'
             },
             jar: cookieJar
         }, function(error3, response3, body3) {
@@ -300,7 +306,7 @@ module.exports = function PinItNode(options) {
                 _log('SUCCESS: _deletePin');
                 cb(null, body3);
                 return;
-            } else if(!boardId){
+            } else if (!boardId) {
                 _log('! ERROR: _createPin');
                 _log(error3);
                 _log(response3.statusCode);
@@ -316,7 +322,7 @@ module.exports = function PinItNode(options) {
                 return;
             }
         });
-    }//_deletePin
+    } //_deletePin
 
     function _updatePin(cb) {
         _log('_updatePin');
@@ -339,9 +345,9 @@ module.exports = function PinItNode(options) {
             },
             gzip: true,
             form: {
-                source_url: '/'+ userurl + '/' + boardurl + '/',
+                source_url: '/' + userurl + '/' + boardurl + '/',
                 data: '{"options":{"board_id":"' + boardId + '","description":"' + description + '","link":"' + url + '","id":"' + pinId + '"},"context":{}}',
-                module_path: 'App()>BoardPage(resource=BoardResource(username=' + userurl + ',+slug=' + boardurl +'))>Grid(resource=BoardFeedResource(board_id=' + boardId + ',+board_url=/' + userurl + '/' + boardurl +'/' + ',+page_size=null,+prepend=true,+access=write,delete,+board_layout=default))>GridItems(resource=BoardFeedResource(board_id=' + boardId + ',+board_url=/' + userurl + '/'+ boardurl + '/,+page_size=null,+prepend=true,+access=write,delete,+board_layout=default))>Pin(resource=PinResource(id='+ pinId +'))>ShowModalButton(module=PinEdit)#Modal(module=PinEdit(resource=PinResource(id=' + pinId + ')))' 
+                module_path: 'App()>BoardPage(resource=BoardResource(username=' + userurl + ',+slug=' + boardurl + '))>Grid(resource=BoardFeedResource(board_id=' + boardId + ',+board_url=/' + userurl + '/' + boardurl + '/' + ',+page_size=null,+prepend=true,+access=write,delete,+board_layout=default))>GridItems(resource=BoardFeedResource(board_id=' + boardId + ',+board_url=/' + userurl + '/' + boardurl + '/,+page_size=null,+prepend=true,+access=write,delete,+board_layout=default))>Pin(resource=PinResource(id=' + pinId + '))>ShowModalButton(module=PinEdit)#Modal(module=PinEdit(resource=PinResource(id=' + pinId + ')))'
             },
             jar: cookieJar
         }, function(error3, response3, body3) {
@@ -349,7 +355,7 @@ module.exports = function PinItNode(options) {
                 _log('SUCCESS: _updatePin');
                 cb(null, body3);
                 return;
-            } else if(!boardId){
+            } else if (!boardId) {
                 _log('! ERROR: _createPin');
                 _log(error3);
                 _log(response3.statusCode);
@@ -365,7 +371,7 @@ module.exports = function PinItNode(options) {
                 return;
             }
         });
-    }//_updatePin
+    } //_updatePin
 
     function _createBoard(cb) {
         _log('_createBoard');
@@ -385,8 +391,8 @@ module.exports = function PinItNode(options) {
             },
             gzip: true,
             form: {
-                source_url: '/' + userurl +'/',
-                data: '{"options":{"name":"' + boardName + '","category":"'+ boardCategory +'","description":"' + description + '","privacy":"' + boardPrivacy + '","layout":"default"},"context":{}}',
+                source_url: '/' + userurl + '/',
+                data: '{"options":{"name":"' + boardName + '","category":"' + boardCategory + '","description":"' + description + '","privacy":"' + boardPrivacy + '","layout":"default"},"context":{}}',
                 module_path: 'App()>UserProfilePage(resource=UserResource(username=' + userurl + ', invite_code=null))>UserProfileContent(resource=UserResource(username=' + userurl + ', invite_code=null))>UserBoards()>Grid(resource=ProfileBoardsResource(username=' + userurl + '))>GridItems(resource=ProfileBoardsResource(username=' + userurl + '))>BoardCreateRep(submodule=[object Object], ga_category=board_create)#Modal(module=BoardCreate()'
             },
             jar: cookieJar
@@ -404,7 +410,7 @@ module.exports = function PinItNode(options) {
                 return;
             }
         });
-    }//_createBoard
+    } //_createBoard
 
     function _deleteBoard(cb) {
         _log('_deleteBoard');
@@ -424,7 +430,7 @@ module.exports = function PinItNode(options) {
             },
             gzip: true,
             form: {
-                source_url: '/' + userurl +'/' + boardurl + '/',
+                source_url: '/' + userurl + '/' + boardurl + '/',
                 data: '{"options":{"board_id":"' + boardId + '"},"context":{}}',
                 module_path: 'Modal()>ConfirmDialog(template=delete_board)'
             },
@@ -434,7 +440,7 @@ module.exports = function PinItNode(options) {
                 _log('SUCCESS: _deleteBoard');
                 cb(null, body3);
                 return;
-            } else if(!boardId){
+            } else if (!boardId) {
                 _log('! ERROR: _createPin');
                 _log(error3);
                 _log(response3.statusCode);
@@ -450,7 +456,7 @@ module.exports = function PinItNode(options) {
                 return;
             }
         });
-    }//_deleteBoard
+    } //_deleteBoard
 
     function _updateBoard(cb) {
         _log('_updateBoard');
@@ -470,9 +476,9 @@ module.exports = function PinItNode(options) {
             },
             gzip: true,
             form: {
-                source_url: '/' + userurl +'/' + boardurl + '/',
-                data: '{"options":{"name":"'+ boardName +'","category":"'+ boardCategory + '","description":"'+ description +'","layout":"default","board_id":"' + boardId + '"},"context":{}}',
-                module_path: 'App()>BoardPage(resource=BoardResource(username='+ userurl + ',+slug=' + boardurl + '))>BoardHeader(resource=BoardResource(board_id=' + boardId + '))>BoardInfoBar(resource=BoardResource(board_id=' + boardId + '))>ShowModalButton(module=BoardEdit)#Modal(module=BoardEdit(resource=BoardResource(board_id=' + boardId + ')))'
+                source_url: '/' + userurl + '/' + boardurl + '/',
+                data: '{"options":{"name":"' + boardName + '","category":"' + boardCategory + '","description":"' + description + '","layout":"default","board_id":"' + boardId + '"},"context":{}}',
+                module_path: 'App()>BoardPage(resource=BoardResource(username=' + userurl + ',+slug=' + boardurl + '))>BoardHeader(resource=BoardResource(board_id=' + boardId + '))>BoardInfoBar(resource=BoardResource(board_id=' + boardId + '))>ShowModalButton(module=BoardEdit)#Modal(module=BoardEdit(resource=BoardResource(board_id=' + boardId + ')))'
             },
             jar: cookieJar
         }, function(error3, response3, body3) {
@@ -480,7 +486,7 @@ module.exports = function PinItNode(options) {
                 _log('SUCCESS: _updateBoard');
                 cb(null, body3);
                 return;
-            } else if(!boardId){
+            } else if (!boardId) {
                 _log('! ERROR: _createPin');
                 _log(error3);
                 _log(response3.statusCode);
@@ -496,7 +502,7 @@ module.exports = function PinItNode(options) {
                 return;
             }
         });
-    }//_updateBoard
+    } //_updateBoard
 
     return {
         /**
@@ -529,18 +535,18 @@ module.exports = function PinItNode(options) {
                 _getNewCSRFForPinning,
                 _getBoardId,
                 _createPin
-                ], function(err, results) {
-                    if (err) {
-                        if (typeof cb === 'function') {
-                        cb(err);
-                        }
-                        return;
-                    }
+            ], function(err, results) {
+                if (err) {
                     if (typeof cb === 'function') {
-                        // See if we have an object response
-                        if(results && results[4]) {
-                            cb(null, results[4]);
-                    }else{
+                        cb(err);
+                    }
+                    return;
+                }
+                if (typeof cb === 'function') {
+                    // See if we have an object response
+                    if (results && results[4]) {
+                        cb(null, results[4]);
+                    } else {
                         _log('Warning: No object result. Something might have gone wrong');
                         cb(null);
                     }
@@ -585,15 +591,15 @@ module.exports = function PinItNode(options) {
 
                 if (typeof cb === 'function') {
                     // See if we have an object response
-                    if(results && results[4]) {
+                    if (results && results[4]) {
                         cb(null, results[4]);
-                    }else{
+                    } else {
                         _log('Warning: No object result.  Something might have gone wrong');
                         cb(null);
                     }
                 }
             });
-        },//deletePin
+        }, //deletePin
 
         /**
          * Updates a pin on a board
@@ -612,7 +618,7 @@ module.exports = function PinItNode(options) {
          *
          */
         updatePin: function updatePin(params, cb) {
-        	boardId = params.boardId; //optional
+            boardId = params.boardId; //optional
             boardurl = params.boardurl;
 
             pinId = params.pinId;
@@ -636,15 +642,15 @@ module.exports = function PinItNode(options) {
 
                 if (typeof cb === 'function') {
                     // See if we have an object response
-                    if(results && results[4]) {
+                    if (results && results[4]) {
                         cb(null, results[4]);
-                    }else{
+                    } else {
                         _log('Warning: No object result.  Something might have gone wrong');
                         cb(null);
                     }
                 }
             });
-        },//updatePin
+        }, //updatePin
 
         /**
          * Creates a Board
@@ -659,7 +665,7 @@ module.exports = function PinItNode(options) {
          * }
          *
          */
-       createBoard: function createBoard(params, cb) {
+        createBoard: function createBoard(params, cb) {
             boardName = params.boardName;
             description = params.description;
             boardCategory = params.boardCategory;
@@ -689,8 +695,8 @@ module.exports = function PinItNode(options) {
                     }
                 }
             });
-       },//createBoard
-        
+        }, //createBoard
+
         /**
          * Deletes a Board
          *
@@ -702,7 +708,7 @@ module.exports = function PinItNode(options) {
          * }
          *
          */
-       deleteBoard: function deleteBoard(params, cb) {
+        deleteBoard: function deleteBoard(params, cb) {
             boardurl = params.boardurl;
             boardId = params.boardId;
 
@@ -724,15 +730,15 @@ module.exports = function PinItNode(options) {
 
                 if (typeof cb === 'function') {
                     // See if we have an object response
-                    if(results && results[4]) {
+                    if (results && results[4]) {
                         cb(null, results[4]);
-                    }else{
+                    } else {
                         _log('Warning: No object result.  Something might have gone wrong');
                         cb(null);
                     }
                 }
             });
-       },//deleteBoard
+        }, //deleteBoard
 
         /**
          * Updates a Board
@@ -748,7 +754,7 @@ module.exports = function PinItNode(options) {
          * }
          *
          */
-       updateBoard: function updateBoard(params, cb) {
+        updateBoard: function updateBoard(params, cb) {
             boardurl = params.boardurl;
             boardId = params.boardId;
 
@@ -774,17 +780,14 @@ module.exports = function PinItNode(options) {
 
                 if (typeof cb === 'function') {
                     // See if we have an object response
-                    if(results && results[4]) {
+                    if (results && results[4]) {
                         cb(null, results[4]);
-                    }else{
+                    } else {
                         _log('Warning: No object result.  Something might have gone wrong');
                         cb(null);
                     }
                 }
             });
-       },//updateBoard
+        }, //updateBoard
     }; //return
 }; //module
-
-
-
