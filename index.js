@@ -224,9 +224,9 @@ module.exports = function PinItNode(options) {
 
                 if (typeof cb === 'function') {
                     // See if we have an object response
-                    if(results && results[3]) {
+                    if (results && results[3]) {
                         cb(null, results[3]);
-                    }else{
+                    } else {
                         _log('Warning: No object result.  Something might have gone wrong');
                         cb(null);
                     }
