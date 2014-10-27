@@ -3,16 +3,18 @@ var _ = require('lodash');
 // var expect = require('chai').expect;
 var assert = require('chai').assert;
 var PinIt = require('pin-it-node');
+
 var pinIt = new PinIt({
     username: 'myUser@name.com',
     password: 'mySuperSecretPassword', // Replace username, password, and boardId below with your actual credentials
-    userurl: 'kengoldfarb'
+    userurl: 'kengoldfarb',
+    debug: true
 });
 
 describe('pin it', function () {
 	this.timeout(15000);
 	it('should be able to pin with valid username, password, and boardId', function(done) {
-		pinIt.pin({
+		pinIt.createPin({
 		    boardId: '294704438055170924', // The boardId for http://www.pinterest.com/kentester24/test-board/
 		    url: 'http://kengoldfarb.com', // The click back link from pinterest
 		    description: 'Ken Goldfarb',
@@ -35,22 +37,23 @@ describe('pin it', function () {
 	});
 
 	it('should be able to create a new board', function(done) {
-		pinIt.pin({
-		    boardId: '294704438055170924', // The boardId for http://www.pinterest.com/kentester24/test-board/
-		    url: 'http://kengoldfarb.com', // The click back link from pinterest
-		    description: 'Ken Goldfarb',
-		    media: 'http://www.gravatar.com/avatar/58f58b2ed19f28b30f8deca0e9a1c3b9' // The actual image that will be pinned
+		pinIt.createBoard({
+		    boardName: 'Ken\'s Awesome Board',
+		    description: 'an #awesome board of epic proportions',
+		    boardCategory:  'Animals',  //Limited options, check README for list
+		    boardPrivacy:  'Public'     //refer to privacy section if you plan to make a board secret.
+
 		}, function(err, pinObj) {
 			assert.isNull(err);
 			assert.isObject(pinObj);
 
 		    if(err) {
 		        // Uh-oh...handle the error
-				console.log('Error occurred while pinning');
+				console.log('Error occurred while creating board');
 		        console.log(err);
 				done();
 		    }else{
-				console.log('Success!  New pin has been added to the board.');
+				console.log('Success!  Board has been created.');
 				console.log(pinObj);
 				done();
 			}

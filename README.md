@@ -120,7 +120,7 @@ var pinIt = new PinIt({
 });
 
 pinIt.createBoard({
-	boardName: 'Ken's Awesome Board',
+	boardName: 'Ken\'s Awesome Board',
 	description: 'an #awesome board of epic proportions',
 	boardCategory:  'Animals',  //Limited options, check README for list
 	boardPrivacy:  'Public'     //refer to privacy section if you plan to make a board secret.

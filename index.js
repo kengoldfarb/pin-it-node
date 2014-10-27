@@ -545,7 +545,14 @@ module.exports = function PinItNode(options) {
                 if (typeof cb === 'function') {
                     // See if we have an object response
                     if (results && results[4]) {
-                        cb(null, results[4]);
+                        var resultObj = {};
+                        try{
+                            resultObj = JSON.parse(results[4]);
+                        }catch(e) {
+                            _log('Warning: Error parsing response object from Pinterest');
+                            _log(e);
+                        }
+                        cb(null, resultObj);
                     } else {
                         _log('Warning: No object result. Something might have gone wrong');
                         cb(null);
