@@ -172,6 +172,10 @@ module.exports = function PinItNode(options) {
             jar: cookieJar
         }, function(error3, response3, body3) {
 
+            if(boardId){
+                return;
+            }
+
             if (!error3 && response3.statusCode == 200) {
                     _log('SUCCESS: _getBoardId');
             } else {
