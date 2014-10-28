@@ -208,7 +208,7 @@ It's easy to grab from the html of the board.  Look for the href in the ```.pinI
 
 ### Board Category
 There is a limted number of categories that Pinterest lets you choose from:
-"Animals", "Architecture", "Art", "Cars & Motorcycles", "Celebrities", "Design", "DIY & Crafts", "Education", "Film", "Music & Books", "Food & Drink", "Gardening", "Geek", "Hair & Beauty", "Health & Fitness", "History", "Holidays & Events", "Home Decor", "Humor", "Illustrations & Posters", "Kids", "Men's Fashion", "Outdoors", "Photography", "Products", "Quotes", "Science & Nature", "Sports", "Tattoos", "Technology", "Travel", "Weddings", "Women's Fashion", and "Other"
+"animals", "architecture", "art", "cars_motorcycles", "celebrities", "design", "diy_crafts", "education", "film", "music_books", "food_drink", "gardening", "geek", "hair_beauty", "health_fitness", "history", "holidays_events", "home_decor", "humor", "illustrations_posters", "kids", "mens_fashion", "outdoors", "photography", "products", "quotes", "science_nature", "sports", "tattoos", "technology", "travel", "weddings", "womens_fashion", and "other"
 
 
 ### Board Privacy
