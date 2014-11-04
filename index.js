@@ -1,8 +1,8 @@
 module.exports = function PinItNode(options) {
 
-    var async = require('async');
-    var r = require('request');
-    var request;
+    var async = require('async'),
+        r = require('request'),
+        request;
 
     if (typeof options.requestDefaults === 'object') {
         request = r.defaults(options.requestDefaults);
@@ -10,24 +10,31 @@ module.exports = function PinItNode(options) {
         request = r.defaults({});
     }
 
-    var debug = options.debug || false;
+    var debug = options.debug || false,
+        username = options.username,
+        userurl = options.userurl,
+        password = options.password,
 
-    var username = options.username;
-    var password = options.password;
+        boardId,
+        boardurl,
+        boardCategory,
+        boardPrivacy,
+        boardIdList = [],
+        boardNameList = [],
 
-    var boardId;
-    var url;
-    var description;
-    var media;
+        pinId,
+        url,
+        description,
+        media,
 
-    var csrfToken = '';
-    var cookieJar = r.jar();
+        csrfToken = '',
+        cookieJar = r.jar();
 
     function _log(obj) {
         if (debug) {
             console.log(obj);
         }
-    }
+    } //_log
 
     function _getLoginPageCSRF(cb) {
         _log('_getLoginPageCSRF');
@@ -62,7 +69,7 @@ module.exports = function PinItNode(options) {
                 return;
             }
         });
-    }
+    } //_getLoginPageCSRF
 
     function _doLogin(cb) {
         _log('_doLogin');
@@ -101,7 +108,7 @@ module.exports = function PinItNode(options) {
                 return;
             }
         });
-    }
+    } //_doLogin
 
     function _getNewCSRFForPinning(cb) {
         _log('_getNewCSRFForPinning');
@@ -144,10 +151,85 @@ module.exports = function PinItNode(options) {
             cb(null);
             return;
         });
-    }
+    } //_getNewCSRFForPinning
 
-    function _pinIt(cb) {
-        _log('_pinIt');
+    function _getBoardId(cb) {
+
+        if (boardId) {
+            cb(null);
+            return
+        };
+
+        _log('_getBoard');
+        request({
+            method: 'GET',
+            url: 'http://www.pinterest.com/' + userurl,
+            headers: {
+                'Host': 'www.pinterest.com',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                'Accept-Language': 'en-US,en;q=0.5',
+                'Accept-Encoding': 'gzip, deflate',
+                'Connection': 'keep-alive'
+            },
+            gzip: true,
+            jar: cookieJar
+        }, function(error3, response3, body3) {
+
+            if (!error3 && response3.statusCode == 200) {
+                _log('SUCCESS: _getBoardId');
+            } else {
+                _log('! ERROR: _getBoardId');
+                _log(error3);
+                _log(response3.statusCode);
+                _log(body3);
+                cb(new Error('Unable to get Board Id'));
+                return;
+            }
+
+            var idLocation = _getIndicesOf("board_id", body3.toString(), false);
+            var nameLocation = _getIndicesOf('<a href="', body3.toString(), false);
+
+            for (var i = 1; i < (idLocation.length / 3); i++) {
+                boardIdList[i - 1] = body3.toString().substring(idLocation[i * 3] + 12, idLocation[i * 3] + 30);
+                if (boardIdList[i - 1] === boardIdList[i - 2]) {
+                    boardIdList.splice(i - 1, 1);
+                }
+            }
+
+            boardIdList = boardIdList.filter(function(n) {
+                return n != undefined
+            });
+
+            for (var j = 7; j < (nameLocation.length - 3); j++) {
+                boardNameList[j - 7] = body3.toString().substring((nameLocation[j] + 11 + userurl.length), (nameLocation[j] + 50)).split('/')[0];
+                if (boardNameList[j - 7] == boardurl) {
+                    boardId = boardIdList[j - 7];
+                }
+            }
+
+            cb(null);
+            return;
+
+
+            function _getIndicesOf(searchStr, str, caseSensitive) {
+                var startIndex = 0,
+                    searchStrLen = searchStr.length;
+                var index, indices = [];
+                if (!caseSensitive) {
+                    str = str.toLowerCase();
+                    searchStr = searchStr.toLowerCase();
+                }
+                while ((index = str.indexOf(searchStr, startIndex)) > -1) {
+                    indices.push(index);
+                    startIndex = index + searchStrLen;
+                }
+                return indices;
+            } //_getIndicesOf
+        }); //function
+    } //_getBoardId
+
+    function _createPin(cb) {
+        _log('_createPin');
         request({
             method: 'POST',
             url: 'http://www.pinterest.com/resource/PinResource/create/',
@@ -171,11 +253,19 @@ module.exports = function PinItNode(options) {
             jar: cookieJar
         }, function(error3, response3, body3) {
             if (!error3 && response3.statusCode == 200) {
-                _log('SUCCESS: _pinIt');
+                _log('SUCCESS: _createPin');
+                console.log(body3);
                 cb(null, body3);
                 return;
+            } else if (!boardId) {
+                _log('! ERROR: _createPin');
+                _log(error3);
+                _log(response3.statusCode);
+                // _log(body3);
+                cb(new Error('board Id undefined.  Please check that your boardurl is correct and that your board is public.'));
+                return;
             } else {
-                _log('! ERROR: _pinIt');
+                _log('! ERROR: _createPin');
                 _log(error3);
                 _log(response3.statusCode);
                 // _log(body3);
@@ -185,6 +275,238 @@ module.exports = function PinItNode(options) {
         });
     }
 
+
+    function _deletePin(cb) {
+        _log('_deletePin');
+        request({
+            method: 'POST',
+            url: 'http://www.pinterest.com/resource/PinResource/delete/',
+            headers: {
+                'Host': "www.pinterest.com",
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': csrfToken,
+                'X-NEW-APP': '1',
+                'X-APP-VERSION': '6757f6e',
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                'Accept': 'application/json, text/javascript, */*; q=0.01',
+                'Content-length': '220',
+                'Referer': 'http://www.pinterest.com/' + userurl + '/' + boardurl + '/',
+                'Connection': 'keep-alive',
+                'Accept-Encoding': 'gzip, deflate',
+                'Accept-Language': 'en-US,en;q=0.5'
+            },
+            gzip: true,
+            form: {
+                source_url: '/' + userurl + '/' + boardurl + '/',
+                data: '{"options":{"id":"' + pinId + '"},"context":{}}',
+                module_path: 'Modal()>ConfirmDialog(ga_category=pin_delete,+template=delete_pin)'
+            },
+            jar: cookieJar
+        }, function(error3, response3, body3) {
+            if (!error3 && response3.statusCode == 200) {
+                _log('SUCCESS: _deletePin');
+                // console.log(response3);
+                // console.log(body3);
+                cb(null, body3);
+                return;
+            } else if (!boardId) {
+                _log('! ERROR: _createPin');
+                _log(error3);
+                _log(response3.statusCode);
+                // _log(body3);
+                cb(new Error('board Id undefined.  Please check that your boardurl is correct and that your board is public.'));
+                return;
+            } else {
+                _log('! ERROR: _deletePin');
+                _log(error3);
+                _log(response3.statusCode);
+                // _log(body3);
+                cb(new Error('Unknown error occurred while deleting pin'));
+                return;
+            }
+        });
+    } //_deletePin
+
+    function _updatePin(cb) {
+        _log('_updatePin');
+        request({
+            method: 'POST',
+            url: 'http://www.pinterest.com/resource/PinResource/update/',
+            headers: {
+                'Host': "www.pinterest.com",
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': csrfToken,
+                'X-NEW-APP': '1',
+                'X-APP-VERSION': '6757f6e',
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                'Accept': 'application/json, text/javascript, */*; q=0.01',
+                //'Content-length': '220',
+                'Referer': 'http://www.pinterest.com/' + userurl + '/' + boardurl + '/',
+                'Connection': 'keep-alive',
+                'Accept-Encoding': 'gzip, deflate',
+                'Accept-Language': 'en-US,en;q=0.5'
+            },
+            gzip: true,
+            form: {
+                source_url: '/' + userurl + '/' + boardurl + '/',
+                data: '{"options":{"board_id":"' + boardId + '","description":"' + description + '","link":"' + url + '","id":"' + pinId + '"},"context":{}}',
+                module_path: 'App()>BoardPage(resource=BoardResource(username=' + userurl + ',+slug=' + boardurl + '))>Grid(resource=BoardFeedResource(board_id=' + boardId + ',+board_url=/' + userurl + '/' + boardurl + '/' + ',+page_size=null,+prepend=true,+access=write,delete,+board_layout=default))>GridItems(resource=BoardFeedResource(board_id=' + boardId + ',+board_url=/' + userurl + '/' + boardurl + '/,+page_size=null,+prepend=true,+access=write,delete,+board_layout=default))>Pin(resource=PinResource(id=' + pinId + '))>ShowModalButton(module=PinEdit)#Modal(module=PinEdit(resource=PinResource(id=' + pinId + ')))'
+            },
+            jar: cookieJar
+        }, function(error3, response3, body3) {
+            if (!error3 && response3.statusCode == 200) {
+                _log('SUCCESS: _updatePin');
+                cb(null, body3);
+                return;
+            } else if (!boardId) {
+                _log('! ERROR: _createPin');
+                _log(error3);
+                _log(response3.statusCode);
+                // _log(body3);
+                cb(new Error('board Id undefined.  Please check that your boardurl is correct and that your board is public.'));
+                return;
+            } else {
+                _log('! ERROR: _updatePin');
+                _log(error3);
+                _log(response3.statusCode);
+                // _log(body3);
+                cb(new Error('Unknown error occurred while updating pin'));
+                return;
+            }
+        });
+    } //_updatePin
+
+    function _createBoard(cb) {
+        _log('_createBoard');
+        request({
+            method: 'POST',
+            url: 'http://www.pinterest.com/resource/BoardResource/create/',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': csrfToken,
+                'X-NEW-APP': '1',
+                'X-APP-VERSION': '6757f6e',
+                'Origin': 'https://www.pinterest.com',
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                'Accept': 'application/json, text/javascript, */*; q=0.01',
+                'Referer': 'https://www.pinterest.com/' + userurl + '/',
+                'Accept-Language': 'en-US,en;q=0.8'
+            },
+            gzip: true,
+            form: {
+                source_url: '/' + userurl + '/',
+                data: '{"options":{"name":"' + boardName + '","category":"' + boardCategory + '","description":"' + description + '","privacy":"' + boardPrivacy + '","layout":"default"},"context":{}}',
+                module_path: 'App()>UserProfilePage(resource=UserResource(username=' + userurl + ', invite_code=null))>UserProfileContent(resource=UserResource(username=' + userurl + ', invite_code=null))>UserBoards()>Grid(resource=ProfileBoardsResource(username=' + userurl + '))>GridItems(resource=ProfileBoardsResource(username=' + userurl + '))>BoardCreateRep(submodule=[object Object], ga_category=board_create)#Modal(module=BoardCreate()'
+            },
+            jar: cookieJar
+        }, function(error3, response3, body3) {
+            if (!error3 && response3.statusCode == 200) {
+                _log('SUCCESS: _createBoard');
+                cb(null, body3);
+                return;
+            } else {
+                _log('! ERROR: _createBoard');
+                _log(error3);
+                _log(response3.statusCode);
+                // _log(body3);
+                cb(new Error('Unknown error occurred while creating board'));
+                return;
+            }
+        });
+    } //_createBoard
+
+    function _deleteBoard(cb) {
+        _log('_deleteBoard');
+        request({
+            method: 'POST',
+            url: 'http://www.pinterest.com/resource/BoardResource/delete/',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': csrfToken,
+                'X-NEW-APP': '1',
+                'X-APP-VERSION': '6757f6e',
+                'Origin': 'https://www.pinterest.com',
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                'Accept': 'application/json, text/javascript, */*; q=0.01',
+                'Referer': 'https://www.pinterest.com/' + userurl + '/' + boardurl + '/',
+                'Accept-Language': 'en-US,en;q=0.5'
+            },
+            gzip: true,
+            form: {
+                source_url: '/' + userurl + '/' + boardurl + '/',
+                data: '{"options":{"board_id":"' + boardId + '"},"context":{}}',
+                module_path: 'Modal()>ConfirmDialog(template=delete_board)'
+            },
+            jar: cookieJar
+        }, function(error3, response3, body3) {
+            if (!error3 && response3.statusCode == 200) {
+                _log('SUCCESS: _deleteBoard');
+                cb(null, body3);
+                return;
+            } else if (!boardId) {
+                _log('! ERROR: _createPin');
+                _log(error3);
+                _log(response3.statusCode);
+                // _log(body3);
+                cb(new Error('board Id undefined.  Please check that your boardurl is correct and that your board is public.'));
+                return;
+            } else {
+                _log('! ERROR: _deleteBoard');
+                _log(error3);
+                _log(response3.statusCode);
+                // _log(body3);
+                cb(new Error('Unknown error occurred while deleting board'));
+                return;
+            }
+        });
+    } //_deleteBoard
+
+    function _updateBoard(cb) {
+        _log('_updateBoard');
+        request({
+            method: 'POST',
+            url: 'http://www.pinterest.com/resource/BoardResource/update/',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': csrfToken,
+                'X-NEW-APP': '1',
+                'X-APP-VERSION': '6757f6e',
+                'Origin': 'https://www.pinterest.com',
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                'Accept': 'application/json, text/javascript, */*; q=0.01',
+                'Referer': 'https://www.pinterest.com/userurl/',
+                'Accept-Language': 'en-US,en;q=0.5'
+            },
+            gzip: true,
+            form: {
+                source_url: '/' + userurl + '/' + boardurl + '/',
+                data: '{"options":{"name":"' + boardName + '","category":"' + boardCategory + '","description":"' + description + '","layout":"default","board_id":"' + boardId + '"},"context":{}}',
+                module_path: 'App()>BoardPage(resource=BoardResource(username=' + userurl + ',+slug=' + boardurl + '))>BoardHeader(resource=BoardResource(board_id=' + boardId + '))>BoardInfoBar(resource=BoardResource(board_id=' + boardId + '))>ShowModalButton(module=BoardEdit)#Modal(module=BoardEdit(resource=BoardResource(board_id=' + boardId + ')))'
+            },
+            jar: cookieJar
+        }, function(error3, response3, body3) {
+            if (!error3 && response3.statusCode == 200) {
+                _log('SUCCESS: _updateBoard');
+                cb(null, body3);
+                return;
+            } else if (!boardId) {
+                _log('! ERROR: _createPin');
+                _log(error3);
+                _log(response3.statusCode);
+                // _log(body3);
+                cb(new Error('board Id undefined.  Please check that your boardurl is correct and that your board is public.'));
+                return;
+            } else {
+                _log('! ERROR: _updateBoard');
+                _log(error3);
+                _log(response3.statusCode);
+                // _log(body3);
+                cb(new Error('Unknown error occurred while updating board'));
+                return;
+            }
+        });
+    } //_updateBoard
+
     return {
         /**
          * Pins an item to a board
@@ -192,6 +514,7 @@ module.exports = function PinItNode(options) {
          * Request parameters:
          * 'params' - an object containing the parameters for pinning:
          * {
+         *  boardurl: 'kens-board'
          *	boardId: '12345',
          *	url: 'http://www.kengoldfarb.com',
          *	description: 'an #awesome site',
@@ -199,21 +522,75 @@ module.exports = function PinItNode(options) {
          * }
          *
          */
-        pin: function pin(params, cb) {
+        createPin: function createPin(params, cb) {
+
+            boardurl = params.boardurl;
             boardId = params.boardId;
+
             url = params.url;
             description = params.description;
             media = params.media;
-
-            // Validate parameters
-            // TODO
 
             // Do it!
             async.series([
                 _getLoginPageCSRF,
                 _doLogin,
                 _getNewCSRFForPinning,
-                _pinIt
+                _getBoardId,
+                _createPin
+            ], function(err, results) {
+                if (err) {
+                    if (typeof cb === 'function') {
+                        cb(err);
+                    }
+                    return;
+                }
+                if (typeof cb === 'function') {
+                    // See if we have an object response
+                    if (results && results[4]) {
+                        var resultObj = {};
+                        try{
+                            resultObj = JSON.parse(results[4]);
+                        }catch(e) {
+                            _log('Warning: Error parsing response object from Pinterest');
+                            _log(e);
+                        }
+                        cb(null, resultObj);
+                    } else {
+                        _log('Warning: No object result. Something might have gone wrong');
+                        cb(null);
+                    }
+                }
+            });
+        },
+
+        /**
+         * unpins an item from a board
+         * example board url: "http://www.pinterest.com/kentester24/test-board/
+         *
+         * Request parameters:
+         * 'params' - an object containing the parameters for pinning:
+         * {
+         *	pinId: '12345',
+         *
+         *	boardurl: 'test-board'
+         *  boardId: '123'
+         * }
+         *
+         */
+        deletePin: function deletePin(params, cb) {
+            pinId = params.pinId;
+
+            boardurl = params.boardurl;
+            boardId = params.boardId;
+
+            // Do it!
+            async.series([
+                _getLoginPageCSRF,
+                _doLogin,
+                _getBoardId,
+                _getNewCSRFForPinning,
+                _deletePin
             ], function(err, results) {
                 if (err) {
                     if (typeof cb === 'function') {
@@ -224,14 +601,210 @@ module.exports = function PinItNode(options) {
 
                 if (typeof cb === 'function') {
                     // See if we have an object response
-                    if(results && results[3]) {
-                        cb(null, results[3]);
-                    }else{
+                    if (results && results[4]) {
+                        var resultObj = {};
+                        try{
+                            resultObj = JSON.parse(results[4]);
+                        }catch(e) {
+                            _log('Warning: Error parsing response object from Pinterest');
+                            _log(e);
+                        }
+                        cb(null, resultObj);
+                    } else {
+                        _log('Warning: No object result. Something might have gone wrong');
+                        cb(null);
+                    }
+                }
+            });
+        }, //deletePin
+
+        /**
+         * Updates a pin on a board
+         * example board url: "http://www.pinterest.com/kentester24/test-board/
+         *
+         * Request parameters:
+         * 'params' - an object containing the parameters for pinning:
+         * {
+         *	boardId: '12345',
+         *  boardurl: 'test-board',            //the location of the board on pinterest
+         *
+         *  pinId: '134564',
+         *	url: 'http://www.kengoldfarb.com',  //url the pin links to
+         *	description: 'an #awesome site',
+         * }
+         *
+         */
+        updatePin: function updatePin(params, cb) {
+            boardId = params.boardId; //optional
+            boardurl = params.boardurl;
+
+            pinId = params.pinId;
+            url = params.url;
+            description = params.description;
+
+            // Do it!
+            async.series([
+                _getLoginPageCSRF,
+                _doLogin,
+                _getNewCSRFForPinning,
+                _getBoardId,
+                _updatePin
+            ], function(err, results) {
+                if (err) {
+                    if (typeof cb === 'function') {
+                        cb(err);
+                    }
+                    return;
+                }
+
+                if (typeof cb === 'function') {
+                    // See if we have an object response
+                    if (results && results[4]) {
+                        cb(null, results[4]);
+                    } else {
                         _log('Warning: No object result.  Something might have gone wrong');
                         cb(null);
                     }
                 }
             });
-        }
-    };
-};
+        }, //updatePin
+
+        /**
+         * Creates a Board
+         *
+         * Request parameters:
+         * 'params' - an object containing the parameters for pinning:
+         * {
+         *  boardName: 'Test Board',
+         *  description: 'an #awesome board of epic proportions',
+         *  boardCategory:  'Animals',  //Limited options, check README for list
+         *  boardPrivacy:  'Public'     //or 'Private'
+         * }
+         *
+         */
+        createBoard: function createBoard(params, cb) {
+            boardName = params.boardName;
+            description = params.description;
+            boardCategory = params.boardCategory;
+            boardPrivacy = params.boardPrivacy;
+
+            // Do it!
+            async.series([
+                _getLoginPageCSRF,
+                _doLogin,
+                _getNewCSRFForPinning,
+                _createBoard
+            ], function(err, results) {
+                if (err) {
+                    if (typeof cb === 'function') {
+                        cb(err);
+                    }
+                    return;
+                }
+
+                if (typeof cb === 'function') {
+                    // See if we have an object response
+                    if (results && results[3]) {
+                        cb(null, results[3]);
+                    } else {
+                        _log('Warning: No object result.  Something might have gone wrong');
+                        cb(null);
+                    }
+                }
+            });
+        }, //createBoard
+
+        /**
+         * Deletes a Board
+         *
+         * Request parameters:
+         * 'params' - an object containing the parameters for pinning:
+         * {
+         *  boardurl: 'TestBoard',
+         *  boardId: '12345',
+         * }
+         *
+         */
+        deleteBoard: function deleteBoard(params, cb) {
+            boardurl = params.boardurl;
+            boardId = params.boardId;
+
+
+            // Do it!
+            async.series([
+                _getLoginPageCSRF,
+                _doLogin,
+                _getNewCSRFForPinning,
+                _getBoardId,
+                _deleteBoard
+            ], function(err, results) {
+                if (err) {
+                    if (typeof cb === 'function') {
+                        cb(err);
+                    }
+                    return;
+                }
+
+                if (typeof cb === 'function') {
+                    // See if we have an object response
+                    if (results && results[4]) {
+                        cb(null, results[4]);
+                    } else {
+                        _log('Warning: No object result.  Something might have gone wrong');
+                        cb(null);
+                    }
+                }
+            });
+        }, //deleteBoard
+
+        /**
+         * Updates a Board
+         *
+         * Request parameters:
+         * 'params' - an object containing the parameters for pinning:
+         * {
+         *  boardurl: 'TestBoard',
+         *  boardId: '12345',
+         *  description: 'an #awesome board of epic proportions',
+         *  boardCategory:  'Animals',  //Limited options, check README for list
+         *  boardPrivacy:  'Public' //or 'Private'
+         * }
+         *
+         */
+        updateBoard: function updateBoard(params, cb) {
+            boardurl = params.boardurl;
+            boardId = params.boardId;
+
+            boardName = params.boardName;
+            description = params.description;
+            boardCategory = params.boardCategory;
+            boardPrivacy = params.boardPrivacy;
+
+            // Do it!
+            async.series([
+                _getLoginPageCSRF,
+                _doLogin,
+                _getNewCSRFForPinning,
+                _getBoardId,
+                _updateBoard
+            ], function(err, results) {
+                if (err) {
+                    if (typeof cb === 'function') {
+                        cb(err);
+                    }
+                    return;
+                }
+
+                if (typeof cb === 'function') {
+                    // See if we have an object response
+                    if (results && results[4]) {
+                        cb(null, results[4]);
+                    } else {
+                        _log('Warning: No object result.  Something might have gone wrong');
+                        cb(null);
+                    }
+                }
+            });
+        }, //updateBoard
+    }; //return
+}; //module
