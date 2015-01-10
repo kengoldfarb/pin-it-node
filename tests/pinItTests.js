@@ -7,13 +7,53 @@ var PinIt = require('pin-it-node');
 var pinIt = new PinIt({
     username: 'myUser@name.com',
     password: 'mySuperSecretPassword', // Replace username, password, and boardId below with your actual credentials
-    userurl: 'kentester24'
+    userurl: 'kentester24',
+    debug: true
 });
 
 var testData = {};
+var boardId;
+var boardUrl;
 
 describe('pin it', function () {
 	this.timeout(15000);
+	it('should be able to create a board', function(done) {
+		pinIt.createBoard({
+		    boardName: 'Ken\'s Awesome Board',
+		    description: 'an #awesome board of epic proportions',
+		    boardCategory:  'geek',  //Limited options, check README for list
+		    boardPrivacy:  'public'     //refer to privacy section if you plan to make a board secret.
+
+		}, function(err, pinObj) {
+			assert.isNull(err);
+
+		    assert.isObject(pinObj);
+		    boardId = pinObj.resource_response.data.id;
+		    boardUrl = pinObj.resource_response.data.id;
+		    assert.isString(boardId);
+		    done();
+		});
+	});
+
+	it('should be able to delete a board', function(done) {
+		pinIt.deleteBoard({
+			boardurl: 'kens-awesome-board',
+			boardId: boardId
+		}, function(err, pinObj) {
+			if(err) {
+				// Uh-oh...handle the error
+				console.log(err);
+				return;
+			}
+			assert.isNull(err);
+			assert.isObject(pinObj);
+			console.log('Success!  The board has been deleted.');
+			console.log(pinObj);
+			done();
+		})
+	});
+
+
 	it('should be able to pin with valid username, password, and boardId', function(done) {
 		pinIt.createPin({
 		    boardId: '294704438055170924', // The boardId for http://www.pinterest.com/kentester24/test-board/

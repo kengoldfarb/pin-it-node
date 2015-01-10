@@ -36,6 +36,21 @@ module.exports = function PinItNode(options) {
         }
     } //_log
 
+    function _getIndicesOf(searchStr, str, caseSensitive) {
+        var startIndex = 0,
+            searchStrLen = searchStr.length;
+        var index, indices = [];
+        if (!caseSensitive) {
+            str = str.toLowerCase();
+            searchStr = searchStr.toLowerCase();
+        }
+        while ((index = str.indexOf(searchStr, startIndex)) > -1) {
+            indices.push(index);
+            startIndex = index + searchStrLen;
+        }
+        return indices;
+    } //_getIndicesOf
+
     function _getLoginPageCSRF(cb) {
         _log('_getLoginPageCSRF');
         request({
@@ -190,6 +205,7 @@ module.exports = function PinItNode(options) {
                 return;
             }
 
+            console.log(response3);
             var idLocation = _getIndicesOf("board_id", body3.toString(), false);
             var nameLocation = _getIndicesOf('<a href="', body3.toString(), false);
 
@@ -204,6 +220,8 @@ module.exports = function PinItNode(options) {
                 return n != undefined
             });
 
+            console.log(boardIdList);
+
             for (var j = 7; j < (nameLocation.length - 3); j++) {
                 boardNameList[j - 7] = body3.toString().substring((nameLocation[j] + 11 + userurl.length), (nameLocation[j] + 50)).split('/')[0];
                 if (boardNameList[j - 7] == boardurl) {
@@ -213,22 +231,6 @@ module.exports = function PinItNode(options) {
 
             cb(null);
             return;
-
-
-            function _getIndicesOf(searchStr, str, caseSensitive) {
-                var startIndex = 0,
-                    searchStrLen = searchStr.length;
-                var index, indices = [];
-                if (!caseSensitive) {
-                    str = str.toLowerCase();
-                    searchStr = searchStr.toLowerCase();
-                }
-                while ((index = str.indexOf(searchStr, startIndex)) > -1) {
-                    indices.push(index);
-                    startIndex = index + searchStrLen;
-                }
-                return indices;
-            } //_getIndicesOf
         }); //function
     } //_getBoardId
 
@@ -314,7 +316,7 @@ module.exports = function PinItNode(options) {
                 cb(null, body3);
                 return;
             } else if (!boardId) {
-                _log('! ERROR: _createPin');
+                _log('! ERROR: _deletePin');
                 _log(error3);
                 _log(response3.statusCode);
                 // _log(body3);
@@ -448,7 +450,7 @@ module.exports = function PinItNode(options) {
                 cb(null, body3);
                 return;
             } else if (!boardId) {
-                _log('! ERROR: _createPin');
+                _log('! ERROR: _deleteBoard');
                 _log(error3);
                 _log(response3.statusCode);
                 // _log(body3);
@@ -519,10 +521,10 @@ module.exports = function PinItNode(options) {
          * 'params' - an object containing the parameters for pinning:
          * {
          *  boardurl: 'kens-board'
-         *	boardId: '12345',
-         *	url: 'http://www.kengoldfarb.com',
-         *	description: 'an #awesome site',
-         *	media: 'http://www.kengoldfarb.com/images/pin-it.png'
+         *  boardId: '12345',
+         *  url: 'http://www.kengoldfarb.com',
+         *  description: 'an #awesome site',
+         *  media: 'http://www.kengoldfarb.com/images/pin-it.png'
          * }
          *
          */
@@ -575,9 +577,9 @@ module.exports = function PinItNode(options) {
          * Request parameters:
          * 'params' - an object containing the parameters for pinning:
          * {
-         *	pinId: '12345',
+         *  pinId: '12345',
          *
-         *	boardurl: 'test-board'
+         *  boardurl: 'test-board'
          *  boardId: '123'
          * }
          *
@@ -629,12 +631,12 @@ module.exports = function PinItNode(options) {
          * Request parameters:
          * 'params' - an object containing the parameters for pinning:
          * {
-         *	boardId: '12345',
+         *  boardId: '12345',
          *  boardurl: 'test-board',            //the location of the board on pinterest
          *
          *  pinId: '134564',
-         *	url: 'http://www.kengoldfarb.com',  //url the pin links to
-         *	description: 'an #awesome site',
+         *  url: 'http://www.kengoldfarb.com',  //url the pin links to
+         *  description: 'an #awesome site',
          * }
          *
          */
