@@ -4,6 +4,8 @@ This is an unofficial interface to Pinterest's pin-it api.  You can pin anything
 
 __Note:__ Pinterest _could_ change their api at any time causing this library to break.  You've been warned.
 
+## NOTICE: Due to pinterest changes, the 0.1.x branch IS NOT WORKING.
+
 ## Installation
 
 ### From the command line
