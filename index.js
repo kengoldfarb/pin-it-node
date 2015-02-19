@@ -40,14 +40,16 @@ module.exports = function PinItNode(options) {
         }, function(error, response, body) {
             if (!error && response.statusCode == 200) {
                 for (var i in response.headers['set-cookie']) {
-                    var cookieHeader = response.headers['set-cookie'][i];
-                    _log('COOKIE ' + i + ': ' + cookieHeader);
 
-                    // Get csrf token
-                    var matches = cookieHeader.match(/csrftoken=([a-zA-Z0-9]+);/);
-                    if (matches && matches[1]) {
-                        csrfToken = matches[1];
-                    }
+	                if (csrfToken == '') {
+		                var cookieHeader = response.headers['set-cookie'][i];
+		                _log('COOKIE ' + i + ': ' + cookieHeader);
+		                // Get csrf token
+		                var matches = cookieHeader.match(/csrftoken=([a-zA-Z0-9]+);/);
+		                if (matches && matches[1]) {
+			                csrfToken = matches[1];
+		                }
+	                }
                 }
 
                 var cookies = cookieJar.getCookieString('https://www.pinterest.com');
@@ -178,7 +180,7 @@ module.exports = function PinItNode(options) {
                 _log('! ERROR: _pinIt');
                 _log(error3);
                 _log(response3.statusCode);
-                // _log(body3);
+                _log(body3);
                 cb(new Error('Unknown error occurred while pinning'));
                 return;
             }
