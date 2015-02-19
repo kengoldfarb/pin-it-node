@@ -16,7 +16,7 @@ __Note:__ Pinterest _could_ change their api at any time causing this library to
 ```
 {
 	dependencies: {
-		"pin-it-node": "~0.1.0"
+		"pin-it-node": "~0.2.0"
 	}
 }
 ```

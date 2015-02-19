@@ -1,7 +1,7 @@
 {
     "name": "pin-it-node",
     "description":"Unofficial pinterest 'pin-it' api for nodejs",
-    "version": "0.1.2",
+    "version": "0.2.0",
     "author": "Ken Goldfarb",
     "main": "index.js",
     "dependencies": {
