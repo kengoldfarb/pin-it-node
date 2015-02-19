@@ -95,7 +95,6 @@ module.exports = function PinItNode(options) {
                 'X-Requested-With': 'XMLHttpRequest',
                 'X-CSRFToken': csrfToken,
                 'X-NEW-APP': '1',
-                'X-APP-VERSION': '6757f6e',
                 'Origin': 'https://www.pinterest.com',
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
                 'Accept': 'application/json, text/javascript, */*; q=0.01',
@@ -129,7 +128,7 @@ module.exports = function PinItNode(options) {
         _log('_getNewCSRFForPinning');
         request({
             method: 'GET',
-            url: 'http://www.pinterest.com/pin/create/button/?url=' + url + '&description=' + description + '&media=' + media,
+            url: 'https://www.pinterest.com/pin/create/button/?url=' + url + '&description=' + description + '&media=' + media,
             headers: {
                 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
                 'Referer': 'https://www.pinterest.com/login/',
@@ -178,7 +177,7 @@ module.exports = function PinItNode(options) {
         _log('_getBoard');
         request({
             method: 'GET',
-            url: 'http://www.pinterest.com/' + userurl,
+            url: 'https://www.pinterest.com/' + userurl,
             headers: {
                 'Host': 'www.pinterest.com',
                 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -196,6 +195,7 @@ module.exports = function PinItNode(options) {
 
             if (!error3 && response3.statusCode == 200) {
                 _log('SUCCESS: _getBoardId');
+                // _log(body3);
             } else {
                 _log('! ERROR: _getBoardId');
                 _log(error3);
@@ -205,7 +205,7 @@ module.exports = function PinItNode(options) {
                 return;
             }
 
-            console.log(response3);
+            // _log(response3);
             var idLocation = _getIndicesOf("board_id", body3.toString(), false);
             var nameLocation = _getIndicesOf('<a href="', body3.toString(), false);
 
@@ -220,7 +220,7 @@ module.exports = function PinItNode(options) {
                 return n != undefined
             });
 
-            console.log(boardIdList);
+            _log(boardIdList);
 
             for (var j = 7; j < (nameLocation.length - 3); j++) {
                 boardNameList[j - 7] = body3.toString().substring((nameLocation[j] + 11 + userurl.length), (nameLocation[j] + 50)).split('/')[0];
@@ -228,7 +228,7 @@ module.exports = function PinItNode(options) {
                     boardId = boardIdList[j - 7];
                 }
             }
-
+            _log('Got boardId: ' + boardId);
             cb(null);
             return;
         }); //function
@@ -238,12 +238,11 @@ module.exports = function PinItNode(options) {
         _log('_createPin');
         request({
             method: 'POST',
-            url: 'http://www.pinterest.com/resource/PinResource/create/',
+            url: 'https://www.pinterest.com/resource/PinResource/create/',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
                 'X-CSRFToken': csrfToken,
                 'X-NEW-APP': '1',
-                'X-APP-VERSION': '6757f6e',
                 'Origin': 'https://www.pinterest.com',
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
                 'Accept': 'application/json, text/javascript, */*; q=0.01',
@@ -260,13 +259,14 @@ module.exports = function PinItNode(options) {
         }, function(error3, response3, body3) {
             if (!error3 && response3.statusCode == 200) {
                 _log('SUCCESS: _createPin');
-                console.log(body3);
+                _log(body3);
                 cb(null, body3);
                 return;
             } else if (!boardId) {
                 _log('! ERROR: _createPin');
                 _log(error3);
                 _log(response3.statusCode);
+                _log(body3);
                 // _log(body3);
                 cb(new Error('board Id undefined.  Please check that your boardurl is correct and that your board is public.'));
                 return;
@@ -274,6 +274,7 @@ module.exports = function PinItNode(options) {
                 _log('! ERROR: _createPin');
                 _log(error3);
                 _log(response3.statusCode);
+                _log(body3);
                 // _log(body3);
                 cb(new Error('Unknown error occurred while pinning'));
                 return;
@@ -286,17 +287,16 @@ module.exports = function PinItNode(options) {
         _log('_deletePin');
         request({
             method: 'POST',
-            url: 'http://www.pinterest.com/resource/PinResource/delete/',
+            url: 'https://www.pinterest.com/resource/PinResource/delete/',
             headers: {
                 'Host': "www.pinterest.com",
                 'X-Requested-With': 'XMLHttpRequest',
                 'X-CSRFToken': csrfToken,
                 'X-NEW-APP': '1',
-                'X-APP-VERSION': '6757f6e',
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
                 'Accept': 'application/json, text/javascript, */*; q=0.01',
                 'Content-length': '220',
-                'Referer': 'http://www.pinterest.com/' + userurl + '/' + boardurl + '/',
+                'Referer': 'https://www.pinterest.com/' + userurl + '/' + boardurl + '/',
                 'Connection': 'keep-alive',
                 'Accept-Encoding': 'gzip, deflate',
                 'Accept-Language': 'en-US,en;q=0.5'
@@ -337,17 +337,16 @@ module.exports = function PinItNode(options) {
         _log('_updatePin');
         request({
             method: 'POST',
-            url: 'http://www.pinterest.com/resource/PinResource/update/',
+            url: 'https://www.pinterest.com/resource/PinResource/update/',
             headers: {
                 'Host': "www.pinterest.com",
                 'X-Requested-With': 'XMLHttpRequest',
                 'X-CSRFToken': csrfToken,
                 'X-NEW-APP': '1',
-                'X-APP-VERSION': '6757f6e',
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
                 'Accept': 'application/json, text/javascript, */*; q=0.01',
                 //'Content-length': '220',
-                'Referer': 'http://www.pinterest.com/' + userurl + '/' + boardurl + '/',
+                'Referer': 'https://www.pinterest.com/' + userurl + '/' + boardurl + '/',
                 'Connection': 'keep-alive',
                 'Accept-Encoding': 'gzip, deflate',
                 'Accept-Language': 'en-US,en;q=0.5'
@@ -386,12 +385,11 @@ module.exports = function PinItNode(options) {
         _log('_createBoard');
         request({
             method: 'POST',
-            url: 'http://www.pinterest.com/resource/BoardResource/create/',
+            url: 'https://www.pinterest.com/resource/BoardResource/create/',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
                 'X-CSRFToken': csrfToken,
                 'X-NEW-APP': '1',
-                'X-APP-VERSION': '6757f6e',
                 'Origin': 'https://www.pinterest.com',
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
                 'Accept': 'application/json, text/javascript, */*; q=0.01',
@@ -425,12 +423,11 @@ module.exports = function PinItNode(options) {
         _log('_deleteBoard');
         request({
             method: 'POST',
-            url: 'http://www.pinterest.com/resource/BoardResource/delete/',
+            url: 'https://www.pinterest.com/resource/BoardResource/delete/',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
                 'X-CSRFToken': csrfToken,
                 'X-NEW-APP': '1',
-                'X-APP-VERSION': '6757f6e',
                 'Origin': 'https://www.pinterest.com',
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
                 'Accept': 'application/json, text/javascript, */*; q=0.01',
@@ -471,12 +468,11 @@ module.exports = function PinItNode(options) {
         _log('_updateBoard');
         request({
             method: 'POST',
-            url: 'http://www.pinterest.com/resource/BoardResource/update/',
+            url: 'https://www.pinterest.com/resource/BoardResource/update/',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
                 'X-CSRFToken': csrfToken,
                 'X-NEW-APP': '1',
-                'X-APP-VERSION': '6757f6e',
                 'Origin': 'https://www.pinterest.com',
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
                 'Accept': 'application/json, text/javascript, */*; q=0.01',
@@ -711,7 +707,7 @@ module.exports = function PinItNode(options) {
                 if (typeof cb === 'function') {
                     // See if we have an object response
                     if (results && results[3]) {
-                        cb(null, results[3]);
+                        cb(null, JSON.parse(results[3]));
                     } else {
                         _log('Warning: No object result.  Something might have gone wrong');
                         cb(null);
@@ -754,7 +750,7 @@ module.exports = function PinItNode(options) {
                 if (typeof cb === 'function') {
                     // See if we have an object response
                     if (results && results[4]) {
-                        cb(null, results[4]);
+                        cb(null, JSON.parse(results[4]));
                     } else {
                         _log('Warning: No object result.  Something might have gone wrong');
                         cb(null);
@@ -804,7 +800,7 @@ module.exports = function PinItNode(options) {
                 if (typeof cb === 'function') {
                     // See if we have an object response
                     if (results && results[4]) {
-                        cb(null, results[4]);
+                        cb(null, JSON.parse(results[4]));
                     } else {
                         _log('Warning: No object result.  Something might have gone wrong');
                         cb(null);

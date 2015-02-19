@@ -35,7 +35,7 @@ var pinIt = new PinIt({
 });
 
 pinIt.createPin({
-	boardurl: 'kens-awesome-board',
+	boardId: '294704438055170924',
 	url: 'http://www.kengoldfarb.com', // The click back link from pinterest
 	description: 'Wow.  Such dev.',
 	media: 'http://www.kengoldfarb.com/images/pin-it.png' // The actual image that will be pinned
@@ -63,7 +63,6 @@ var pinIt = new PinIt({
 });
 
 pinIt.deletePin({
-	boardurl: 'kens-board',
 	pinId: '123' 
 	
 }, function(err, pinObj) {
@@ -78,34 +77,6 @@ pinIt.deletePin({
 })
 ```
 
-####<em>To Update Pin:</em>
-
-```
-var PinIt = require('pin-it-node');
-
-var pinIt = new PinIt({
-	username: 'MyUsername',
-	userurl: 'kengoldfarb',
-	password: 'MySuperSecretPassword'
-});
-
-pinIt.updatePin({
-	boardurl: 'kens-board',
-	pinId: '12345', 
-	url: 'http://www.kengoldfarb.com', // The click back link from pinterest
-	description: 'Wow.  Such dev.',
-	
-}, function(err, pinObj) {
-	if(err) {
-		// Uh-oh...handle the error
-		console.log(err);
-		return;
-	}
-
-	console.log('Success!  The pin has been updated.');
-	console.log(pinObj);
-})
-```
 
 
 ####<em>To Create Board:</em>
@@ -149,7 +120,7 @@ var pinIt = new PinIt({
 });
 
 pinIt.deleteBoard({
-	boardurl: 'kens-awesome-board',
+	boardId: '294704438055170924',
 	
 }, function(err, pinObj) {
 	if(err) {
@@ -163,63 +134,35 @@ pinIt.deleteBoard({
 })
 ```
 
-####<em>To Update Board:</em>
-
-```
-var PinIt = require('pin-it-node');
-
-var pinIt = new PinIt({
-	username: 'MyUsername',
-	userurl: 'kengoldfarb',
-	password: 'MySuperSecretPassword'
-});
-
-pinIt.updateBoard({
-	boardurl: 'kens-awesome-board',
-	
-	boardName: 'THIS IS A MORE AWESOME NAME',
-	description: 'an #awesome board of epic proportions',
-	boardCategory:  'geek',  //Limited options, 
-	boardPrivacy:  'public' //or 'Private'
-	
-}, function(err, pinObj) {
-	if(err) {
-		// Uh-oh...handle the error
-		console.log(err);
-		return;
-	}
-
-	console.log('Success!  The board has been updated.');
-	console.log(pinObj);
-	var boardId = pinObj.resource_response.data.id;
-})
-```
-
-__Currently only pinning of images is supported__
 
 ###Getting the boardurl and userurl
+
 If you look at any the url of any board, you will be looking at: ```http://www.pinterest.com/userurl/boardurl/```.
 The formatting of a boardurl is generally in lowercase with removed puncuation and "-" substituted for whitespace.
 
 
 ### Getting the pinId
+
 (for pin removal)
 It's easy to grab from the html of the board.  Look for the href in the ```.pinImageWrapper``` class.  If you are viewing a pin, the pinId is the number in the url.
 
 
 ### Board Category
+
 There is a limted number of categories that Pinterest lets you choose from:
 "animals", "architecture", "art", "cars_motorcycles", "celebrities", "design", "diy_crafts", "education", "film", "music_books", "food_drink", "gardening", "geek", "hair_beauty", "health_fitness", "history", "holidays_events", "home_decor", "humor", "illustrations_posters", "kids", "mens_fashion", "outdoors", "photography", "products", "quotes", "science_nature", "sports", "tattoos", "technology", "travel", "weddings", "womens_fashion", and "other"
 
 
 ### Board Privacy
+
 Boards can be 'public' or 'secret'.  Insert one of those two as a string when creating or updating a board.
 __SECRET BOARDS CANNOT BE UPDATED OR DELETED__ via pin-it-node.  This functionality is in the works, but it is not implemented yet.
 
 ### Board ID's
-The boardId is NOT NECESSARY to pin.  However, if it's an option you prefer, pin-it-node accepts this instead of a boardurl.
-format like so:  ```boardId: '12345',``` and use it in place of a boardurl when needed.
-You can get the boardId by going to pinterest and inspecting the GET request to http://www.pinterest.com/resource/BoardResource/get/.  You should see it listed in the "module_path" parameter of the request in the format: ```resource=BoardResource(board_id=1234567)```
+
+The boardId is REQUIRED to pin.  In the future, ideally pin-it-node will accept a board url as an alternative.
+
+You can get the boardId by going to pinterest and inspecting the GET request to https://www.pinterest.com/resource/BoardResource/get/.  You should see it listed in the "module_path" parameter of the request in the format: ```resource=BoardResource(board_id=1234567)```
 
 
 ## Advanced Options
