@@ -1,3 +1,12 @@
+# ⚠️ DEPRECATED
+
+Pinterest now has the ability to create pins through their API.  Check out the official documentation:
+
+https://developers.pinterest.com/docs/sdks/js/
+
+https://developers.pinterest.com/docs/api/pins/
+
+
 # (Unofficial) "Pin It" Pinterest API
 
 This is an unofficial interface to Pinterest's pin-it api.  You can pin anything you want to your own boards programatically using nodejs!
